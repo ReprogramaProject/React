@@ -1,6 +1,7 @@
 import React from 'react'
 import Postit from '../../componentes/Postit/Postit'
 import loading from './loading.svg'
+import * as apiPostit from '../../apis/postit'
 import './Home.css'
 
 
@@ -12,42 +13,34 @@ class Home extends React.Component {
 
     componentDidMount() {
         // TODO: buscar lista de postit
-        const postits = [
-            {
-                id: "c2f27308-75c6-440b-bbf9-1a075c32200f",
-                titulo: "Estuda HTML",
-                texto: "Lorem Ipsum"
-            },
-            {
-                id: "4627781c-bd04-41d5-8c97-3819d2a38fc1",
-                titulo: "Estuda CSS",
-                texto: "Lorem Ipsum"
-            },
-            {
-                id: "04b9dd92-71a6-46bc-9e63-df5112d3fa71",
-                titulo: "Estuda JS",
-                texto: "Lorem Ipsum"
-            }
-        ]
-        
-        setTimeout(() => {
-            this.setState({
-                postits: postits,
-                carregando: false
+        apiPostit.listaPostits()
+            .then(resposta => {
+                this.setState({
+                    postits: resposta.data.notas,
+                    carregando: false
+                })
             })
-        }, 3000)
+            .catch(erro => {
+                alert(erro);
+            });
     }
 
     adicionaPostit = (novoPostit) => {
         // TODO: cadastrar postit na API
 
-        this.setState(prevState => {
-            novoPostit.id = prevState.postits.length + 1
-
-            return {
-                postits: this.state.postits.concat(novoPostit)
-            }
-        })
+        apiPostit.adicionaPostit(novoPostit)
+            .then(resposta => {
+                this.setState(prevState => {
+                    novoPostit.id = resposta.data.id
+        
+                    return {
+                        postits: this.state.postits.concat(novoPostit)
+                    }
+                })
+            })
+            .catch(erro => {
+                alert(erro);
+            });
     }
 
     editaPostit = (postitAlterado) => {
