@@ -6,7 +6,7 @@ import Conta from './paginas/Conta/Conta'
 import Contato from './paginas/Contato/Contato'
 import QuemSomos from './paginas/QuemSomos/QuemSomos'
 import NaoEncontrada from './paginas/NaoEncontrada/NaoEncontrada'
-import { Route, Switch, Redirect } from 'react-router-dom'
+import { Route, Switch, Redirect, withRouter } from 'react-router-dom'
 import './App.css'
 
 /* 
@@ -21,19 +21,32 @@ import './App.css'
 class App extends React.Component {
   constructor(props) {
     super(props)
+    const usuario = JSON.parse(localStorage.getItem('usuario'))
 
-    this.state = { usuario: false }
+    this.state = {
+      usuario: usuario || null
+    }
 
     this.logaUsuario = this.logaUsuario.bind(this)
     this.deslogaUsuario = this.deslogaUsuario.bind(this)
   }
 
-  logaUsuario() {
-    this.setState({ usuario: true })
+  logaUsuario(usuario) {
+    localStorage.setItem('usuario', JSON.stringify(usuario))
+    
+    this.setState({
+      usuario: usuario
+    })
+    
+    this.props.history.push('/')
   }
 
   deslogaUsuario() {
-    this.setState({ usuario: false })
+    localStorage.removeItem('usuario')
+
+    this.setState({
+      usuario: null
+    })
   }
 
   render() {
@@ -50,10 +63,7 @@ class App extends React.Component {
           )} />
 
           <Route path="/login" render={props => (
-            <Login 
-              onEnviarClick={this.logaUsuario} 
-              historico={props.history} 
-            />
+            <Login onEnviarClick={this.logaUsuario} />
           )} />
           
           <Route path="/conta" component={Conta} />
@@ -66,4 +76,4 @@ class App extends React.Component {
   }
 }
 
-export default App
+export default withRouter(App)

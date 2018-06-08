@@ -3,6 +3,7 @@ import Formulario from '../../componentes/Formulario/Formulario'
 import Grupo from '../../componentes/Formulario/Grupo/Grupo'
 import Botao from '../../componentes/Formulario/Botao/Botao'
 import Link from '../../componentes/Formulario/Link/Link'
+import * as apiLogin from '../../apis/login'
 import './Login.css'
 
 
@@ -32,29 +33,26 @@ class Login extends React.Component {
     handleSubmit = (e) => {
         e.preventDefault()
 
-        const usuario = {
-            email: this.state.email.valor,
-            senha: this.state.senha.valor
-        }
-
         const estaDesabilitado = this.estaDesabilitado()
 
         if (!estaDesabilitado) {
-            // TODO: enviar dados para a API
-            console.log("usuario", usuario)
-            
+            const usuario = {
+                email: this.state.email.valor,
+                senha: this.state.senha.valor
+            }
 
-            this.props.onEnviarClick()
-            this.props.historico.push('/')
+            apiLogin.logaUsuario(usuario)
+                .then(resposta => {
+                    this.props.onEnviarClick(resposta.data.usuario)
+                })
+                .catch(erro => {
+                    alert(erro.response.data.erro)
+                })
         }
         
     }
 
     handleChange = (nomeDoInput, valorDoInput, erro = '') => {
-        // console.log('nomeDoInput: ', nomeDoInput)
-        // console.log('valorDoInput: ', valorDoInput)
-        // console.log('erro: ', erro)
-
         this.setState({
             [nomeDoInput]: {
                 valor: valorDoInput,

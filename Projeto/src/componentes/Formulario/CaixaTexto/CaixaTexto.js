@@ -4,10 +4,6 @@ import './CaixaTexto.css'
 
 function CaixaTexto(props) {
     function valida(e){
-        // console.log("input: ", e.target)
-        // console.log("name: ", e.target.name)
-        // console.log("value: ", e.target.value)
-
         const nome = e.target.name
         const valor = e.target.value
         

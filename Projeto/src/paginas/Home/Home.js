@@ -12,22 +12,19 @@ class Home extends React.Component {
     }
 
     componentDidMount() {
-        // TODO: buscar lista de postit
         apiPostit.listaPostits()
             .then(resposta => {
                 this.setState({
-                    postits: resposta.data.notas,
+                    postits: resposta.data.postits,
                     carregando: false
                 })
             })
             .catch(erro => {
-                alert(erro);
-            });
+                alert(erro.response.data.erro)
+            })
     }
 
     adicionaPostit = (novoPostit) => {
-        // TODO: cadastrar postit na API
-
         apiPostit.adicionaPostit(novoPostit)
             .then(resposta => {
                 this.setState(prevState => {
@@ -39,36 +36,44 @@ class Home extends React.Component {
                 })
             })
             .catch(erro => {
-                alert(erro);
-            });
+                alert(erro.response.data.erro)
+            })
     }
 
     editaPostit = (postitAlterado) => {
-        // TODO: alterar postit na API
-        
-        this.setState(prevState => {
-            return {
-                postits: prevState.postits.map(postitAtual => {
-                    if (postitAtual.id === postitAlterado.id) {
-                        return postitAlterado
-                    } else {
-                        return postitAtual
+        apiPostit.editaPostit(postitAlterado)
+            .then(resposta => {
+                this.setState(prevState => {
+                    return {
+                        postits: prevState.postits.map(postitAtual => {
+                            if (postitAtual.id === postitAlterado.id) {
+                                return postitAlterado
+                            } else {
+                                return postitAtual
+                            }
+                        })
                     }
                 })
-            }
-        })
+            })
+            .catch(erro => {
+                alert(erro.response.data.erro)
+            })
     }
 
-    removePostit = (id) => {
-        // TODO: remover postit na API
-
-        this.setState(prevState => {
-            return {
-                postits: prevState.postits.filter(postitAtual => {
-                    return postitAtual.id !== id ? true : false
+    removePostit = (idPostitDeletado) => {
+        apiPostit.removePostit(idPostitDeletado)
+            .then(resposta => {
+                this.setState(prevState => {
+                    return {
+                        postits: prevState.postits.filter(postitAtual => {
+                            return postitAtual.id !== idPostitDeletado ? true : false
+                        })
+                    }
                 })
-            }
-        })
+            })
+            .catch(erro => {
+                alert(erro.response.data.erro)
+            })
     }
 
     render() {
