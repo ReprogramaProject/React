@@ -1,81 +1,42 @@
 import React from 'react'
+import { Redirect } from 'react-router-dom'
 import Postit from '../../componentes/Postit/Postit'
-import loading from './loading.gif'
-import * as apiPostit from '../../apis/postits'
+import loading from './loading.svg'
 import './Home.css'
 
 
 class Home extends React.Component {
     state = {
-        postits: [],
         carregando: true
     }
 
     componentDidMount() {
-        // TODO: buscar lista de postit
-        apiPostit.getPostits()
-            .then(response => {
-                this.setState({
-                    postits: response.data.postits,
-                    carregando: false
-                })
-            })
-            .catch(error => {
-                alert(error.response.data.erro)
-            })
+        this.props.disparaListaPostits()
+    }
+
+    componentWillReceiveProps(novasProps) {
+        this.setState({
+            carregando: false
+        })
     }
 
     adicionaPostit = (novoPostit) => {
-        apiPostit.postPostit(novoPostit)
-            .then(response => {
-                this.setState(prevState => {
-                    novoPostit.id = response.data.id
-        
-                    return {
-                        postits: prevState.postits.concat(novoPostit)
-                    }
-                })
-            })
+        this.props.disparaAdicionaPostit(novoPostit)
     }
 
     editaPostits = (postitAlterado) => {
-        apiPostit.putPostit(postitAlterado)
-            .then(response => {
-                this.setState(prevState => {
-                    return {
-                        postits: prevState.postits.map(
-                            (itemDoArray) => {
-                                if (itemDoArray.id === postitAlterado.id) {
-                                    return postitAlterado
-                                } else {
-                                    return itemDoArray
-                                }
-                            }
-                        )
-                    }
-                })
-                // .catch(error => {
-                //     alert(error.response.data.erro)
-                // })
-
-            })
+        this.props.disparaEditaPostit(postitAlterado)
     }
 
-
     removePostit = (idPostitRemovido) => {
-        apiPostit.deletePostit(idPostitRemovido)
-            .then(response => {
-                this.setState(prevState => {
-                    return {
-                        postits: prevState.postits.filter(
-                            postit => postit.id !== idPostitRemovido
-                        )
-                    }
-                })
-            })
+        this.props.disparaRemovePostit(idPostitRemovido)
     }
 
     render() {
+        if (!this.props.usuario) {
+            return <Redirect to="/login" />
+        }
+
         return (
             <div className="home">
                 <Postit
@@ -84,12 +45,16 @@ class Home extends React.Component {
                     onRemovePostitClick={this.removePostit}
                 />
     
-                <div className="home__lista">
+                <div>
                 {
                     this.state.carregando ? (
-                        <img src={loading} alt="Carregando lista de postit" />
+                        <img 
+                            className="home__loading" 
+                            src={loading} 
+                            alt="Carregando lista de postit" 
+                        />
                     ) : (
-                        this.state.postits.map(postit => (
+                        this.props.postits.map(postit => (
                             <Postit 
                                 key={postit.id}
                                 id={postit.id}

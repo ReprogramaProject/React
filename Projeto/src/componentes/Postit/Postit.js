@@ -107,6 +107,7 @@ class Postit extends React.Component {
                     name="titulo"
                     value={this.state.titulo}
                     placeholder="Título..."
+                    autoComplete="off"
                     area-label="Título"
                     onChange={this.handleCampoChange}
                 />
@@ -115,6 +116,7 @@ class Postit extends React.Component {
                     name="texto"
                     value={this.state.texto}
                     placeholder="Digite o texto..."
+                    autoComplete="off"
                     area-label="Texto"
                     onChange={this.handleCampoChange}
                 />

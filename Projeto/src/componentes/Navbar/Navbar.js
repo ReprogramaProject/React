@@ -17,7 +17,7 @@ function Navbar(props) {
                 <img className="navbar__logo" src={logo} alt="Logo" />
             </Link>
 
-            <Menu usuario={props.usuario} onSairClick={props.onSairClick} />
+            <Menu usuario={props.usuario} onSairClick={props.disparaDeslogaUsuario} />
         </nav>
     )
 }
